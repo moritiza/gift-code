@@ -1,0 +1,185 @@
+version: "3.9"
+services:
+
+  # Satrt Discount Service
+  discount-service-app:
+    container_name: discount_service_app
+    build: './discount-service'
+    networks:
+      - frontend
+      - backend
+    ports:
+      - 7000:7000
+    links:
+      - discount-service-postgres
+      - discount-service-postgres-test
+    depends_on:
+      discount-service-postgres:
+        condition: service_healthy
+    restart: always
+
+  discount-service-postgres:
+    container_name: discount_service_postgres
+    image: postgres:latest
+    networks:
+      - backend
+    expose:
+      - 5432
+    ports:
+      - 5432:5432
+    volumes:
+      - discount_service_postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: moritiza
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: moritiza
+      PGDATA: /data/postgres
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      timeout: 15s
+      retries: 3
+
+  discount-service-postgres-test:
+    container_name: discount_service_test_postgres
+    image: postgres:latest
+    networks:
+      - backend
+    expose:
+      - 5432
+    ports:
+      - 5433:5432
+    volumes:
+      - discount_service_postgres_test_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: moritiza
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: moritiza
+      PGDATA: /data/postgres
+    restart: always
+
+  # Start Report Service
+  report-service-app:
+    container_name: report_service_app
+    build: './report-service'
+    networks:
+      - frontend
+      - backend
+    ports:
+      - 8000:8000
+    links:
+      - report-service-postgres
+      - report-service-postgres-test
+    depends_on:
+      report-service-postgres:
+        condition: service_healthy
+    restart: always
+
+  report-service-postgres:
+    container_name: report_service_postgres
+    image: postgres:latest
+    networks:
+      - backend
+    expose:
+      - 5432
+    ports:
+      - 5434:5432
+    volumes:
+      - report_service_postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: moritiza
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: moritiza
+      PGDATA: /data/postgres
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      timeout: 15s
+      retries: 3
+
+  report-service-postgres-test:
+    container_name: report_service_test_postgres
+    image: postgres:latest
+    networks:
+      - backend
+    expose:
+      - 5432
+    ports:
+      - 5435:5432
+    volumes:
+      - report_service_postgres_test_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: moritiza
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: moritiza
+      PGDATA: /data/postgres
+    restart: always
+
+  # Start Wallet Service
+  wallet-service-app:
+    container_name: wallet_service_app
+    build: './wallet-service'
+    networks:
+      - frontend
+      - backend
+    ports:
+      - 9000:9000
+    links:
+      - wallet-service-postgres
+      - wallet-service-postgres-test
+    depends_on:
+      wallet-service-postgres:
+        condition: service_healthy
+    restart: always
+
+  wallet-service-postgres:
+    container_name: wallet_service_postgres
+    image: postgres:latest
+    networks:
+      - backend
+    expose:
+      - 5432
+    ports:
+      - 5436:5432
+    volumes:
+      - wallet_service_postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: moritiza
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: moritiza
+      PGDATA: /data/postgres
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      timeout: 15s
+      retries: 3
+
+  wallet-service-postgres-test:
+    container_name: wallet_service_test_postgres
+    image: postgres:latest
+    networks:
+      - backend
+    expose:
+      - 5432
+    ports:
+      - 5437:5432
+    volumes:
+      - wallet_service_postgres_test_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: moritiza
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: moritiza
+      PGDATA: /data/postgres
+    restart: always
+
+volumes:
+  discount_service_postgres_data:
+  discount_service_postgres_test_data:
+  report_service_postgres_data:
+  report_service_postgres_test_data:
+  wallet_service_postgres_data:
+  wallet_service_postgres_test_data:
+
+networks:
+  frontend:
+  backend:
